@@ -15,7 +15,7 @@ func main() {
 	gorm := infrastructure.NewGormPostgres()
 
 	//prepare the order routes group
-	orderRouteGroup := g.Group("/orders")
+	orderRouteGroup := g.Group("/v1/orders")
 	orderRepo := repository.NewOrderRepository(gorm)
 	orderServices := service.NewOrderService(orderRepo)
 	orderHandler := handler.NewOrderHandler(orderServices)
