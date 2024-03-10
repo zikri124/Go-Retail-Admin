@@ -40,7 +40,7 @@ func (o *orderServiceImpl) GetOrders(ctx context.Context) ([]dto.OrderDto, error
 
 func (o *orderServiceImpl) CreateOrder(ctx context.Context, orderDto *dto.OrderDto) error {
 	order := orderDto.TransformToDomain()
-	err := o.repo.CreateOrders(ctx, order)
+	err := o.repo.CreateOrder(ctx, order)
 	orderDto.Id = order.Id
 
 	orderDto.TransformToDto(order)

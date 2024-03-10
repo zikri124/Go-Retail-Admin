@@ -9,7 +9,7 @@ import (
 
 type OrderQuery interface {
 	GetOrders(ctx context.Context) ([]domain.Order, error)
-	CreateOrders(ctx context.Context, order *domain.Order) error
+	CreateOrder(ctx context.Context, order *domain.Order) error
 }
 
 type orderRepository struct {
@@ -38,7 +38,7 @@ func (o *orderRepository) GetOrders(ctx context.Context) ([]domain.Order, error)
 	return orders, nil
 }
 
-func (o *orderRepository) CreateOrders(ctx context.Context, order *domain.Order) error {
+func (o *orderRepository) CreateOrder(ctx context.Context, order *domain.Order) error {
 	db := o.db.GetConnection()
 
 	if err := db.WithContext(ctx).Table("orders").Create(&order).Error; err != nil {
