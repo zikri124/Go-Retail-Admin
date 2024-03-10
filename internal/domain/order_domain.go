@@ -2,6 +2,9 @@ package domain
 
 import (
 	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Order struct {
@@ -9,4 +12,9 @@ type Order struct {
 	CustomerName string    `json:"customer_name"`
 	OrderedAt    time.Time `json:"ordered_at"`
 	Items        []Item    `json:"items" gorm:"foreignKey:OrderId;references:Id"`
+}
+
+func (o *Order) BeforeCreate(db *gorm.DB) (err error) {
+	o.Id = uuid.New().ID()
+	return
 }
