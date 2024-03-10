@@ -10,6 +10,7 @@ import (
 
 type OrderService interface {
 	GetOrders(ctx context.Context) ([]dto.OrderDto, error)
+	CreateOrder(ctx context.Context, orderDto *dto.OrderDto) error
 }
 
 type orderServiceImpl struct {
@@ -26,7 +27,7 @@ func (o *orderServiceImpl) GetOrders(ctx context.Context) ([]dto.OrderDto, error
 	ordersDto := []dto.OrderDto{}
 	for _, order := range orders {
 		orderDto := dto.OrderDto{}
-		orderDto.TransformToDto(order)
+		orderDto.TransformToDto(&order)
 		ordersDto = append(ordersDto, orderDto)
 	}
 
@@ -35,4 +36,14 @@ func (o *orderServiceImpl) GetOrders(ctx context.Context) ([]dto.OrderDto, error
 	}
 
 	return ordersDto, nil
+}
+
+func (o *orderServiceImpl) CreateOrder(ctx context.Context, orderDto *dto.OrderDto) error {
+	order := orderDto.TransformToDomain()
+	err := o.repo.CreateOrders(ctx, order)
+	orderDto.Id = order.Id
+
+	orderDto.TransformToDto(order)
+
+	return err
 }
