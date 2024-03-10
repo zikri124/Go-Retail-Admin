@@ -13,24 +13,42 @@ type OrderDto struct {
 	Items        []ItemDto `json:"items"`
 }
 
-func (o *OrderDto) TransformToDto(order domain.Order) {
-	o.Id = order.Id
+func (o *OrderDto) TransformToDto(order *domain.Order) {
+	if order.Id != 0 {
+		o.Id = order.Id
+	}
 	o.CustomerName = order.CustomerName
 	o.OrderedAt = order.OrderedAt
 
 	items := []ItemDto{}
 	for _, v := range order.Items {
 		item := ItemDto{}
-		item.Transform(v)
+		item.TransformToDto(v)
 		items = append(items, item)
 	}
 
 	o.Items = items
 }
 
-func (o *OrderDto) TransformToDomain(order domain.Order) domain.Order {
+func (o *OrderDto) TransformToDomain() *domain.Order {
+	order := domain.Order{}
+
+	if o.Id != 0 {
+		order.Id = o.Id
+	} else {
+		o.Id = order.Id
+	}
 	order.CustomerName = o.CustomerName
 	order.OrderedAt = o.OrderedAt
 
-	return order
+	items := []domain.Item{}
+	for _, v := range o.Items {
+		item := domain.Item{}
+		item = *v.TransformToDomain()
+		items = append(items, item)
+	}
+
+	order.Items = items
+
+	return &order
 }
