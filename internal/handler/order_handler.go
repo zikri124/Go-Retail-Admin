@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -28,7 +27,7 @@ func NewOrderHandler(svc service.OrderService) OrderHandler {
 func (o *orderHandlerImpl) GetUsers(ctx *gin.Context) {
 	orders, err := o.svc.GetOrders(ctx)
 	if err != nil {
-		response.SetErrorResponse(ctx, http.StatusInternalServerError, err)
+		response.SetErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -41,14 +40,14 @@ func (o *orderHandlerImpl) CreateOrder(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&orderDto)
 
 	if err != nil {
-		response.SetErrorResponse(ctx, http.StatusInternalServerError, err)
+		response.SetErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	err = o.svc.CreateOrder(ctx, &orderDto)
 
 	if err != nil {
-		response.SetErrorResponse(ctx, http.StatusInternalServerError, err)
+		response.SetErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -58,7 +57,7 @@ func (o *orderHandlerImpl) CreateOrder(ctx *gin.Context) {
 func (o *orderHandlerImpl) UpdateOrder(ctx *gin.Context) {
 	orderId, err := strconv.Atoi(ctx.Param("id"))
 	if orderId == 0 || err != nil {
-		response.SetErrorResponse(ctx, http.StatusBadRequest, errors.New("invalid required param"))
+		response.SetErrorResponse(ctx, http.StatusBadRequest, "invalid required param")
 		return
 	}
 
@@ -69,14 +68,14 @@ func (o *orderHandlerImpl) UpdateOrder(ctx *gin.Context) {
 	err = ctx.ShouldBindJSON(&orderDto)
 
 	if err != nil {
-		response.SetErrorResponse(ctx, http.StatusInternalServerError, err)
+		response.SetErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	order, err := o.svc.UpdateOrder(ctx, &orderDto)
 
 	if err != nil {
-		response.SetErrorResponse(ctx, http.StatusInternalServerError, err)
+		response.SetErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
 
