@@ -14,6 +14,7 @@ type OrderHandler interface {
 	GetUsers(ctx *gin.Context)
 	CreateOrder(ctx *gin.Context)
 	UpdateOrder(ctx *gin.Context)
+	DeleteOrder(ctx *gin.Context)
 }
 
 type orderHandlerImpl struct {
@@ -92,4 +93,33 @@ func (o *orderHandlerImpl) UpdateOrder(ctx *gin.Context) {
 	}
 
 	response.SetSuccessResponse(ctx, http.StatusOK, order)
+}
+
+func (o *orderHandlerImpl) DeleteOrder(ctx *gin.Context) {
+	orderId, err := strconv.Atoi(ctx.Param("id"))
+	if orderId == 0 || err != nil {
+		response.SetErrorResponse(ctx, http.StatusBadRequest, "invalid required param")
+		return
+	}
+
+	isExist, err := o.svc.IsOrderExist(ctx, uint32(orderId))
+
+	if err != nil {
+		response.SetErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if !isExist {
+		response.SetErrorResponse(ctx, http.StatusNotFound, "Order not found")
+		return
+	}
+
+	err = o.svc.DeleteOrder(ctx, uint32(orderId))
+
+	if err != nil {
+		response.SetErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.SetSuccessResponse(ctx, http.StatusOK, "Order deleted")
 }

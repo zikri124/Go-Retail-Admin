@@ -11,6 +11,7 @@ type OrderService interface {
 	GetOrders(ctx context.Context) ([]dto.OrderDto, error)
 	CreateOrder(ctx context.Context, orderDto *dto.OrderDto) error
 	UpdateOrder(ctx context.Context, orderDto *dto.OrderDto) (*dto.OrderDto, error)
+	DeleteOrder(ctx context.Context, orderId uint32) error
 	IsOrderExist(ctx context.Context, orderId uint32) (bool, error)
 }
 
@@ -54,6 +55,12 @@ func (o *orderServiceImpl) UpdateOrder(ctx context.Context, orderDto *dto.OrderD
 
 	err := o.repo.UpdateOrder(ctx, order)
 	return orderDto, err
+}
+
+func (o *orderServiceImpl) DeleteOrder(ctx context.Context, orderId uint32) error {
+	err := o.repo.DeleteOrder(ctx, orderId)
+
+	return err
 }
 
 func (o *orderServiceImpl) IsOrderExist(ctx context.Context, orderId uint32) (bool, error) {

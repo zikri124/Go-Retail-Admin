@@ -12,6 +12,7 @@ type OrderQuery interface {
 	GetOrders(ctx context.Context) ([]domain.Order, error)
 	CreateOrder(ctx context.Context, order *domain.Order) error
 	UpdateOrder(ctx context.Context, order *domain.Order) error
+	DeleteOrder(ctx context.Context, orderId uint32) error
 	IsOrderExist(ctx context.Context, orderId uint32) (bool, error)
 }
 
@@ -66,6 +67,32 @@ func (o *orderRepository) UpdateOrder(ctx context.Context, order *domain.Order) 
 	return nil
 }
 
+func (o *orderRepository) DeleteOrder(ctx context.Context, orderId uint32) error {
+	db := o.db.GetConnection()
+	order := domain.Order{Id: orderId}
+
+	item := domain.Item{}
+
+	err := db.
+		WithContext(ctx).
+		Table("items").
+		Where("order_id = ?", orderId).
+		Delete(&item).
+		Error
+
+	if err != nil {
+		return err
+	}
+
+	err = db.
+		WithContext(ctx).
+		Model(&order).
+		Delete(&order).
+		Error
+
+	return err
+}
+
 func (o *orderRepository) IsOrderExist(ctx context.Context, orderId uint32) (bool, error) {
 	db := o.db.GetConnection()
 
@@ -79,5 +106,4 @@ func (o *orderRepository) IsOrderExist(ctx context.Context, orderId uint32) (boo
 		Error
 
 	return isExist, err
-
 }

@@ -22,4 +22,5 @@ func (o *orderRouterImpl) Mount() {
 	o.v.GET("", o.handler.GetUsers)
 	o.v.POST("", o.handler.CreateOrder)
 	o.v.PUT("/:id", o.handler.UpdateOrder)
+	o.v.DELETE("/:id", o.handler.DeleteOrder)
 }
