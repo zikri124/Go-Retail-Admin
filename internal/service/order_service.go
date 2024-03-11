@@ -11,6 +11,7 @@ type OrderService interface {
 	GetOrders(ctx context.Context) ([]dto.OrderDto, error)
 	CreateOrder(ctx context.Context, orderDto *dto.OrderDto) error
 	UpdateOrder(ctx context.Context, orderDto *dto.OrderDto) (*dto.OrderDto, error)
+	IsOrderExist(ctx context.Context, orderId uint32) (bool, error)
 }
 
 type orderServiceImpl struct {
@@ -52,6 +53,11 @@ func (o *orderServiceImpl) UpdateOrder(ctx context.Context, orderDto *dto.OrderD
 	order := orderDto.TransformToDomain()
 
 	err := o.repo.UpdateOrder(ctx, order)
-
 	return orderDto, err
+}
+
+func (o *orderServiceImpl) IsOrderExist(ctx context.Context, orderId uint32) (bool, error) {
+	isExist, err := o.repo.IsOrderExist(ctx, orderId)
+
+	return isExist, err
 }

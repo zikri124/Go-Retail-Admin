@@ -12,6 +12,7 @@ type OrderQuery interface {
 	GetOrders(ctx context.Context) ([]domain.Order, error)
 	CreateOrder(ctx context.Context, order *domain.Order) error
 	UpdateOrder(ctx context.Context, order *domain.Order) error
+	IsOrderExist(ctx context.Context, orderId uint32) (bool, error)
 }
 
 type orderRepository struct {
@@ -60,4 +61,20 @@ func (o *orderRepository) UpdateOrder(ctx context.Context, order *domain.Order) 
 	}
 
 	return nil
+}
+
+func (o *orderRepository) IsOrderExist(ctx context.Context, orderId uint32) (bool, error) {
+	db := o.db.GetConnection()
+
+	var isExist bool
+	err := db.
+		WithContext(ctx).
+		Table("orders").
+		Select("count(*) > 0").
+		Where("id = ?", orderId).
+		Find(&isExist).
+		Error
+
+	return isExist, err
+
 }
