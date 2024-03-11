@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 
-	// "github.com/zikri124/retail-admin-app/internal/domain"
 	"github.com/zikri124/retail-admin-app/internal/dto"
 	"github.com/zikri124/retail-admin-app/internal/repository"
 )
@@ -11,6 +10,7 @@ import (
 type OrderService interface {
 	GetOrders(ctx context.Context) ([]dto.OrderDto, error)
 	CreateOrder(ctx context.Context, orderDto *dto.OrderDto) error
+	UpdateOrder(ctx context.Context, orderDto *dto.OrderDto) (*dto.OrderDto, error)
 }
 
 type orderServiceImpl struct {
@@ -46,4 +46,12 @@ func (o *orderServiceImpl) CreateOrder(ctx context.Context, orderDto *dto.OrderD
 	orderDto.TransformToDto(order)
 
 	return err
+}
+
+func (o *orderServiceImpl) UpdateOrder(ctx context.Context, orderDto *dto.OrderDto) (*dto.OrderDto, error) {
+	order := orderDto.TransformToDomain()
+
+	err := o.repo.UpdateOrder(ctx, order)
+
+	return orderDto, err
 }

@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/zikri124/retail-admin-app/internal/dto"
@@ -12,6 +14,7 @@ import (
 type OrderHandler interface {
 	GetUsers(ctx *gin.Context)
 	CreateOrder(ctx *gin.Context)
+	UpdateOrder(ctx *gin.Context)
 }
 
 type orderHandlerImpl struct {
@@ -50,5 +53,32 @@ func (o *orderHandlerImpl) CreateOrder(ctx *gin.Context) {
 	}
 
 	response.SetSuccessResponse(ctx, http.StatusCreated, orderDto)
-	return
+}
+
+func (o *orderHandlerImpl) UpdateOrder(ctx *gin.Context) {
+	orderId, err := strconv.Atoi(ctx.Param("id"))
+	if orderId == 0 || err != nil {
+		response.SetErrorResponse(ctx, http.StatusBadRequest, errors.New("invalid required param"))
+		return
+	}
+
+	orderDto := dto.OrderDto{}
+
+	orderDto.Id = uint32(orderId)
+
+	err = ctx.ShouldBindJSON(&orderDto)
+
+	if err != nil {
+		response.SetErrorResponse(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	order, err := o.svc.UpdateOrder(ctx, &orderDto)
+
+	if err != nil {
+		response.SetErrorResponse(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.SetSuccessResponse(ctx, http.StatusOK, order)
 }

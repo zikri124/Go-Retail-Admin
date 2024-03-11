@@ -21,4 +21,5 @@ func NewOrderRouter(v *gin.RouterGroup, handler handler.OrderHandler) OrderRoute
 func (o *orderRouterImpl) Mount() {
 	o.v.GET("", o.handler.GetUsers)
 	o.v.POST("", o.handler.CreateOrder)
+	o.v.PUT("/:id", o.handler.UpdateOrder)
 }

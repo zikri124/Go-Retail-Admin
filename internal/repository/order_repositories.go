@@ -5,11 +5,13 @@ import (
 
 	"github.com/zikri124/retail-admin-app/internal/domain"
 	"github.com/zikri124/retail-admin-app/internal/infrastructure"
+	"gorm.io/gorm"
 )
 
 type OrderQuery interface {
 	GetOrders(ctx context.Context) ([]domain.Order, error)
 	CreateOrder(ctx context.Context, order *domain.Order) error
+	UpdateOrder(ctx context.Context, order *domain.Order) error
 }
 
 type orderRepository struct {
@@ -42,6 +44,18 @@ func (o *orderRepository) CreateOrder(ctx context.Context, order *domain.Order) 
 	db := o.db.GetConnection()
 
 	if err := db.WithContext(ctx).Table("orders").Create(&order).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *orderRepository) UpdateOrder(ctx context.Context, order *domain.Order) error {
+	db := o.db.GetConnection()
+
+	err := db.WithContext(ctx).Session(&gorm.Session{FullSaveAssociations: true}).Updates(&order).Error
+
+	if err != nil {
 		return err
 	}
 
