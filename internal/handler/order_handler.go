@@ -72,6 +72,18 @@ func (o *orderHandlerImpl) UpdateOrder(ctx *gin.Context) {
 		return
 	}
 
+	isExist, err := o.svc.IsOrderExist(ctx, orderDto.Id)
+
+	if err != nil {
+		response.SetErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if !isExist {
+		response.SetErrorResponse(ctx, http.StatusNotFound, "Order not found")
+		return
+	}
+
 	order, err := o.svc.UpdateOrder(ctx, &orderDto)
 
 	if err != nil {
