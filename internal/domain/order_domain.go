@@ -15,6 +15,8 @@ type Order struct {
 }
 
 func (o *Order) BeforeCreate(db *gorm.DB) (err error) {
-	o.Id = uuid.New().ID()
+	if o.Id == 0 {
+		o.Id = uuid.New().ID()
+	}
 	return
 }

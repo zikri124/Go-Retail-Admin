@@ -14,6 +14,8 @@ type Item struct {
 }
 
 func (i *Item) BeforeCreate(db *gorm.DB) (err error) {
-	i.Id = uuid.New().ID()
+	if i.Id == 0 {
+		i.Id = uuid.New().ID()
+	}
 	return
 }
