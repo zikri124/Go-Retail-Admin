@@ -30,7 +30,10 @@ func (o *orderRepository) GetOrders(ctx context.Context) ([]domain.Order, error)
 	err := db.
 		WithContext(ctx).
 		Table("orders").
-		Preload("Items").
+		Preload("Items", func(db *gorm.DB) *gorm.DB {
+			return db.Select("*").Where("deleted_at is null")
+		}).
+		Where("deleted_at is null").
 		Find(&orders).
 		Error
 
@@ -71,7 +74,7 @@ func (o *orderRepository) IsOrderExist(ctx context.Context, orderId uint32) (boo
 		WithContext(ctx).
 		Table("orders").
 		Select("count(*) > 0").
-		Where("id = ?", orderId).
+		Where("deleted_at is null and id = ?", orderId).
 		Find(&isExist).
 		Error
 
