@@ -9,6 +9,12 @@ type ItemDto struct {
 	Quantity    int    `json:"quantity"`
 }
 
+type ItemReqDto struct {
+	ItemCode    string `json:"itemCode"`
+	Description string `json:"description"`
+	Quantity    int    `json:"quantity"`
+}
+
 func (i *ItemDto) TransformToDto(item domain.Item) {
 	if item.Id != 0 {
 		i.LineItemId = item.Id

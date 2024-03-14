@@ -7,8 +7,18 @@ import (
 )
 
 type OrderDto struct {
-	Id           uint32    `json:"orderId"`
+	Id           uint32    `json:"OrderId"`
 	OrderedAt    time.Time `json:"orderedAt"`
+	CustomerName string    `json:"customerName"`
+	Items        []ItemDto `json:"items"`
+}
+
+type OrderCreateDto struct {
+	CustomerName string       `json:"customerName"`
+	Items        []ItemReqDto `json:"items"`
+}
+
+type OrderUpdateDto struct {
 	CustomerName string    `json:"customerName"`
 	Items        []ItemDto `json:"items"`
 }
