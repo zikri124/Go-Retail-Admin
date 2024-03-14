@@ -25,6 +25,18 @@ func NewOrderHandler(svc service.OrderService) OrderHandler {
 	return &orderHandlerImpl{svc: svc}
 }
 
+// ShowAllOrders godoc
+//
+//	@Summary		Show orders list
+//	@Description	list all orders with their items
+//	@Tags			orders
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.SuccessRes
+//	@Failure		400		{object}	response.ErrorRes
+//	@Failure		404		{object}	response.ErrorRes
+//	@Failure		500		{object}	response.ErrorRes
+//	@Router			/v1/orders [get]
 func (o *orderHandlerImpl) GetUsers(ctx *gin.Context) {
 	orders, err := o.svc.GetOrders(ctx)
 	if err != nil {
@@ -35,6 +47,19 @@ func (o *orderHandlerImpl) GetUsers(ctx *gin.Context) {
 	response.SetSuccessResponse(ctx, http.StatusOK, orders)
 }
 
+// CreateNewOrder godoc
+//
+//	@Summary		Create a new order data
+//	@Description	will save the new order data with their items to db
+//	@Tags			orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			order	body		dto.OrderCreateDto	true	"New Order"
+//	@Success		201		{object}	response.SuccessRes
+//	@Failure		400		{object}	response.ErrorRes
+//	@Failure		404		{object}	response.ErrorRes
+//	@Failure		500		{object}	response.ErrorRes
+//	@Router			/v1/orders [post]
 func (o *orderHandlerImpl) CreateOrder(ctx *gin.Context) {
 	orderDto := dto.OrderDto{}
 
@@ -55,6 +80,20 @@ func (o *orderHandlerImpl) CreateOrder(ctx *gin.Context) {
 	response.SetSuccessResponse(ctx, http.StatusCreated, orderDto)
 }
 
+// EditAnOrderData godoc
+//
+//	@Summary		Edit an order data
+//	@Description	will get the body, and change order data with id and all items inside it
+//	@Tags			orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		int				true	"Order ID"
+//	@Param			order	body		dto.OrderUpdateDto	true	"New condition order"
+//	@Success		200		{object}	response.SuccessRes
+//	@Failure		400		{object}	response.ErrorRes
+//	@Failure		404		{object}	response.ErrorRes
+//	@Failure		500		{object}	response.ErrorRes
+//	@Router			/v1/orders/{id} [put]
 func (o *orderHandlerImpl) UpdateOrder(ctx *gin.Context) {
 	orderId, err := strconv.Atoi(ctx.Param("id"))
 	if orderId == 0 || err != nil {
@@ -73,7 +112,7 @@ func (o *orderHandlerImpl) UpdateOrder(ctx *gin.Context) {
 		return
 	}
 
-	isExist, err := o.svc.IsOrderExist(ctx, orderDto.Id)
+	isExist, err := o.svc.IsOrderExist(ctx, uint32(orderId))
 
 	if err != nil {
 		response.SetErrorResponse(ctx, http.StatusInternalServerError, err.Error())
@@ -95,6 +134,19 @@ func (o *orderHandlerImpl) UpdateOrder(ctx *gin.Context) {
 	response.SetSuccessResponse(ctx, http.StatusOK, order)
 }
 
+// DeleteAnOrderData godoc
+//
+//	@Summary		Delete an order data
+//	@Description	will soft delete order data by id and all its items
+//	@Tags			orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int	true	"Order ID"
+//	@Success		200		{object}	response.SuccessRes
+//	@Failure		400		{object}	response.ErrorRes
+//	@Failure		404		{object}	response.ErrorRes
+//	@Failure		500		{object}	response.ErrorRes
+//	@Router			/v1/orders/{id} [delete]
 func (o *orderHandlerImpl) DeleteOrder(ctx *gin.Context) {
 	orderId, err := strconv.Atoi(ctx.Param("id"))
 	if orderId == 0 || err != nil {
