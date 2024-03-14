@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/zikri124/retail-admin-app/internal/dto"
 	"github.com/zikri124/retail-admin-app/internal/repository"
@@ -44,6 +45,7 @@ func (o *orderServiceImpl) CreateOrder(ctx context.Context, orderDto *dto.OrderD
 	order := orderDto.TransformToDomain()
 	err := o.repo.CreateOrder(ctx, order)
 	orderDto.Id = order.Id
+	orderDto.OrderedAt = time.Now()
 
 	orderDto.TransformToDto(order)
 
