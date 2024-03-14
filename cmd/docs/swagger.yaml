@@ -1,0 +1,206 @@
+basePath: /
+definitions:
+  dto.ItemDto:
+    properties:
+      description:
+        type: string
+      itemCode:
+        type: string
+      lineItemId:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  dto.ItemReqDto:
+    properties:
+      description:
+        type: string
+      itemCode:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  dto.OrderCreateDto:
+    properties:
+      customerName:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/dto.ItemReqDto'
+        type: array
+    type: object
+  dto.OrderUpdateDto:
+    properties:
+      customerName:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/dto.ItemDto'
+        type: array
+    type: object
+  response.ErrorRes:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+      status:
+        type: string
+    type: object
+  response.SuccessRes:
+    properties:
+      code:
+        type: integer
+      data: {}
+      status:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: api doc for golang bootcamp hackativ8 x kominfo
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: RETAIL ADMIN API DOCUMENTATION
+  version: "2.0"
+paths:
+  /v1/orders:
+    get:
+      consumes:
+      - application/json
+      description: list all orders with their items
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+      summary: Show orders list
+      tags:
+      - orders
+    post:
+      consumes:
+      - application/json
+      description: will save the new order data with their items to db
+      parameters:
+      - description: New Order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrderCreateDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.SuccessRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+      summary: Create a new order data
+      tags:
+      - orders
+  /v1/orders/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: will soft delete order data by id and all its items
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+      summary: Delete an order data
+      tags:
+      - orders
+    put:
+      consumes:
+      - application/json
+      description: will get the body, and change order data with id and all items
+        inside it
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New condition order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrderUpdateDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorRes'
+      summary: Edit an order data
+      tags:
+      - orders
+schemes:
+- http
+swagger: "2.0"
