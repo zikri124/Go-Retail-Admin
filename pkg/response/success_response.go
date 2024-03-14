@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type SuccessResTemplate struct {
+type SuccessRes struct {
 	Code   int         `json:"code"`
 	Status string      `json:"status"`
 	Data   interface{} `json:"data"`
@@ -14,7 +14,7 @@ type SuccessResTemplate struct {
 
 func SetSuccessResponse(ctx *gin.Context, httpStatus int, data interface{}) {
 	// Prepare Response
-	response := SuccessResTemplate{
+	response := SuccessRes{
 		Code:   httpStatus,
 		Status: http.StatusText(httpStatus),
 		Data:   data,
